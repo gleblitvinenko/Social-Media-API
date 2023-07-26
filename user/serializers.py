@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 class MyProfileSerializer(serializers.ModelSerializer):
     # TODO followers, followings, likes
+
     class Meta:
         model = get_user_model()
         fields = ("id", "username", "email", "password", "bio", "profile_picture", "birth_date")

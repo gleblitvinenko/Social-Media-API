@@ -38,13 +38,14 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    username = models.CharField(max_length=50, blank=True)
     email = models.EmailField(_("email address"), unique=True)
     profile_picture = models.URLField(unique=True)
     bio = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
         return self.username
