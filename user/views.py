@@ -62,3 +62,4 @@ class UserDetailView(generics.RetrieveAPIView):
     serializer_class = UserDetailSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    lookup_field = "username"
