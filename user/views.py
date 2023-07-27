@@ -9,7 +9,13 @@ from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 
 from user.permissions import AllowUnauthenticatedOnly
-from user.serializers import MyProfileSerializer, UserRegisterSerializer, CustomAuthTokenSerializer, UserListSerializer
+from user.serializers import (
+    MyProfileSerializer,
+    UserRegisterSerializer,
+    CustomAuthTokenSerializer,
+    UserListSerializer,
+    UserDetailSerializer,
+)
 
 
 class MyProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
@@ -24,7 +30,7 @@ class MyProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
 
 class RegisterView(generics.CreateAPIView):
     queryset = get_user_model().objects.all()
-    permission_classes = (AllowUnauthenticatedOnly, )
+    permission_classes = (AllowUnauthenticatedOnly,)
     serializer_class = UserRegisterSerializer
 
 
@@ -50,3 +56,9 @@ class UserListView(generics.ListAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+
+class UserDetailView(generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserDetailSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
