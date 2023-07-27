@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -7,13 +8,12 @@ from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 
-from user.models import User
 from user.permissions import AllowUnauthenticatedOnly
-from user.serializers import MyProfileSerializer, UserRegisterSerializer, CustomAuthTokenSerializer
+from user.serializers import MyProfileSerializer, UserRegisterSerializer, CustomAuthTokenSerializer, UserListSerializer
 
 
 class MyProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
-    queryset = User.objects.all()
+    queryset = get_user_model().objects.all()
     serializer_class = MyProfileSerializer
     permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
@@ -23,7 +23,7 @@ class MyProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
 
 
 class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
+    queryset = get_user_model().objects.all()
     permission_classes = (AllowUnauthenticatedOnly, )
     serializer_class = UserRegisterSerializer
 
@@ -42,3 +42,11 @@ class LogoutView(APIView):
     def get(request):
         Token.objects.filter(user=request.user).delete()
         return Response({"detail": "Successfully logged out."})
+
+
+class UserListView(generics.ListAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserListSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
