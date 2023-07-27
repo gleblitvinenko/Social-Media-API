@@ -96,9 +96,7 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
         if email and password:
             user = authenticate(
-                request=self.context.get("request"),
-                email=email,
-                password=password
+                request=self.context.get("request"), email=email, password=password
             )
 
             if not user:
@@ -110,3 +108,27 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
         attrs["user"] = user
         return attrs
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "profile_picture",
+        )  # TODO followers & followings
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "username",
+            "first_name",
+            "last_name",
+            "profile_picture",
+            "bio",
+            "birth_date",
+        )  # TODO followers & followings
