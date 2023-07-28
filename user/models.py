@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -62,6 +63,10 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.follower.username} follows {self.following.username}"
+
+    def clean(self):
+        if self.follower == self.following:
+            raise ValidationError("Follower and Following cannot be the same user.")
 
     class Meta:
         ordering = ['-followed_at']
