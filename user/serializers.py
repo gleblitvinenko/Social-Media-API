@@ -111,6 +111,9 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
 
 class UserListSerializer(serializers.ModelSerializer):
+    followers_count = serializers.SerializerMethodField()
+    followings_count = serializers.SerializerMethodField()
+
     class Meta:
         model = get_user_model()
         fields = (
@@ -118,7 +121,17 @@ class UserListSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "profile_picture",
-        )  # TODO followers & followings
+            "followers_count",
+            "followings_count",
+        )
+
+    @staticmethod
+    def get_followers_count(obj):
+        return obj.followers.count()
+
+    @staticmethod
+    def get_followings_count(obj):
+        return obj.following.count()
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
