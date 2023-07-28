@@ -46,7 +46,7 @@ class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
 
     @staticmethod
-    def get(request):
+    def post(request):
         Token.objects.filter(user=request.user).delete()
         return Response({"detail": "Successfully logged out."})
 
