@@ -10,7 +10,7 @@ from user.models import User
 
 
 class MyProfileSerializer(serializers.ModelSerializer):
-    # TODO followers, followings, likes
+    # TODO Posts i like.
 
     class Meta:
         model = get_user_model()
@@ -22,6 +22,8 @@ class MyProfileSerializer(serializers.ModelSerializer):
             "bio",
             "profile_picture",
             "birth_date",
+            "number_of_followers",
+            "number_of_following"
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 8}}
 
