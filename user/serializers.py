@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
+from django.core.paginator import Paginator
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.utils.translation import gettext as _
 
+from post.models import Post, Comment
 from user.models import User
 
 
@@ -131,10 +133,32 @@ class UserListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_followings_count(obj):
-        return obj.following.count()
+        return obj.followings.count()
+
+
+class UserPostsSerializer(serializers.ModelSerializer):
+    number_of_comments = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Post
+        fields = (
+            "id",
+            "image",
+            "content",
+            "number_of_likes",
+            "number_of_comments",
+            "created_at",
+        )
+
+    @staticmethod
+    def get_number_of_comments(obj):
+        return Comment.objects.filter(post=obj).count()
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    number_of_posts = serializers.SerializerMethodField()
+    user_posts = serializers.SerializerMethodField('paginated_user_posts')
+
     class Meta:
         model = get_user_model()
         fields = (
@@ -144,4 +168,28 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "profile_picture",
             "bio",
             "birth_date",
-        )  # TODO followers & followings
+            "number_of_followers",
+            "number_of_following",
+            "number_of_posts",
+            "user_posts"
+        )
+
+    @staticmethod
+    def get_number_of_posts(obj):
+        return Post.objects.filter(user=obj).count()
+
+    def paginated_user_posts(self, obj):
+        page_size = 5
+        paginator = Paginator(obj.posts.all(), page_size)
+        page = self.context['request'].query_params.get('page') or 1
+
+        user_posts = paginator.page(page)
+        serializer = UserPostsSerializer(user_posts, many=True)
+
+        return serializer.data
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ("username", "profile_picture")
