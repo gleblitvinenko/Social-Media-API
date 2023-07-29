@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -44,29 +45,33 @@ class User(AbstractUser):
     profile_picture = models.URLField()
     bio = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
+    followers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="user_followers",
+        blank=True,
+        symmetrical=False  # one-way communication
+    )
+    following = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="user_following",
+        blank=True,
+        symmetrical=False  # one-way communication
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
+    def number_of_followers(self):
+        if self.followers.count():
+            return self.followers.count()
+        return 0
+
+    def number_of_following(self):
+        if self.following.count():
+            return self.following.count()
+        return 0
+
+
+
     def __str__(self):
         return self.username
-
-
-class Follow(models.Model):
-    follower = models.ForeignKey(
-        User, related_name="followers", on_delete=models.CASCADE
-    )
-    following = models.ForeignKey(
-        User, related_name="following", on_delete=models.CASCADE
-    )
-    followed_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.follower.username} follows {self.following.username}"
-
-    def clean(self):
-        if self.follower == self.following:
-            raise ValidationError("Follower and Following cannot be the same user.")
-
-    class Meta:
-        ordering = ['-followed_at']
