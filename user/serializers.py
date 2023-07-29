@@ -179,7 +179,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         return Post.objects.filter(user=obj).count()
 
     def paginated_user_posts(self, obj):
-        page_size = 5
+        page_size = 1
         paginator = Paginator(obj.posts.all(), page_size)
         page = self.context['request'].query_params.get('page') or 1
 

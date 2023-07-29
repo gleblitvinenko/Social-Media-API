@@ -9,13 +9,14 @@ from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 
+from user.pagination import FollowerPagination
 from user.permissions import AllowUnauthenticatedOnly
 from user.serializers import (
     MyProfileSerializer,
     UserRegisterSerializer,
     CustomAuthTokenSerializer,
     UserListSerializer,
-    UserDetailSerializer,
+    UserDetailSerializer, FollowSerializer,
 )
 
 
@@ -66,3 +67,29 @@ class UserDetailView(generics.RetrieveAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     lookup_field = "username"
+
+
+class GetFollowersView(generics.ListAPIView):
+    serializer_class = FollowSerializer
+    pagination_class = FollowerPagination
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        queryset = get_user_model().objects.get(
+            username=username).followers.all()
+        return queryset
+
+
+class GetFollowingView(generics.ListAPIView):
+    serializer_class = FollowSerializer
+    pagination_class = FollowerPagination
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        username = self.kwargs['username']
+        queryset = get_user_model().objects.get(
+            username=username).following.all()
+        return queryset
