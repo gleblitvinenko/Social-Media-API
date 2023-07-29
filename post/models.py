@@ -10,6 +10,9 @@ class Post(models.Model):
     content = models.TextField()
     image = models.URLField()
 
+    def number_of_likes(self):
+        return self.post_post_likes.count()
+
     def __str__(self):
         return f"{self.content[:10]} posted by {self.user.username} at {self.created_at}"
 
