@@ -53,7 +53,7 @@ class LogoutView(APIView):
 
 
 class UserListView(generics.ListAPIView):
-    queryset = get_user_model().objects.all()
+    queryset = get_user_model().objects.prefetch_related("followers", "following")
     serializer_class = UserListSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
