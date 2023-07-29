@@ -62,7 +62,7 @@ class UserListView(generics.ListAPIView):
 
 
 class UserDetailView(generics.RetrieveAPIView):
-    queryset = get_user_model().objects.all()
+    queryset = get_user_model().objects.prefetch_related("followers", "following", "posts")
     serializer_class = UserDetailSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
