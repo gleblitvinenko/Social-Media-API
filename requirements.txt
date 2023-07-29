@@ -8,6 +8,8 @@ charset-normalizer==3.2.0
 click==8.1.6
 colorama==0.4.6
 Django==4.2.3
+django-debug-toolbar==4.1.0
+django-filter==23.2
 djangorestframework==3.14.0
 frozenlist==1.4.0
 idna==3.4
