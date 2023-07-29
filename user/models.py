@@ -71,7 +71,5 @@ class User(AbstractUser):
             return self.following.count()
         return 0
 
-
-
     def __str__(self):
         return self.username

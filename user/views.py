@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -16,7 +18,8 @@ from user.serializers import (
     UserRegisterSerializer,
     CustomAuthTokenSerializer,
     UserListSerializer,
-    UserDetailSerializer, FollowSerializer,
+    UserDetailSerializer,
+    FollowSerializer,
 )
 
 
@@ -62,7 +65,9 @@ class UserListView(generics.ListAPIView):
 
 
 class UserDetailView(generics.RetrieveAPIView):
-    queryset = get_user_model().objects.prefetch_related("followers", "following", "posts")
+    queryset = get_user_model().objects.prefetch_related(
+        "followers", "following", "posts"
+    )
     serializer_class = UserDetailSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -76,9 +81,8 @@ class GetFollowersView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        username = self.kwargs['username']
-        queryset = get_user_model().objects.get(
-            username=username).followers.all()
+        username = self.kwargs["username"]
+        queryset = get_user_model().objects.get(username=username).followers.all()
         return queryset
 
 
@@ -89,7 +93,30 @@ class GetFollowingView(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        username = self.kwargs['username']
-        queryset = get_user_model().objects.get(
-            username=username).following.all()
+        username = self.kwargs["username"]
+        queryset = get_user_model().objects.get(username=username).following.all()
         return queryset
+
+
+class FollowUserView(APIView):
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, format=None, username=None):
+        to_user = get_object_or_404(get_user_model(), username=username)
+        from_user = request.user
+        follow = None
+        if from_user != to_user:
+            if from_user in to_user.followers.all():
+                follow = False
+                from_user.following.remove(to_user)
+                to_user.followers.remove(from_user)
+            else:
+                follow = True
+                from_user.following.add(to_user)
+                to_user.followers.add(from_user)
+        from_user.save()
+        to_user.save()
+
+        data = {"follow": follow}
+        return Response(data)
