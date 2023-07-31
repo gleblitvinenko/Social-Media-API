@@ -36,7 +36,7 @@ class PostLike(models.Model):
         settings.AUTH_USER_MODEL, related_name="user_post_likes", on_delete=models.CASCADE
     )
     post = models.ForeignKey(
-        Post, related_name="post_post_likes", on_delete=models.CASCADE
+        Post, related_name="post_post_likes", on_delete=models.CASCADE, null=True,
     )
     liked_at = models.DateTimeField(auto_now_add=True)
 
