@@ -185,3 +185,9 @@ class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ("username", "profile_picture")
+
+
+class LikedPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ("id", "created_at", "content", "image")

@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.settings import api_settings
 from rest_framework.views import APIView
 
+from post.models import Post
 from user.pagination import FollowerPagination
 from user.permissions import AllowUnauthenticatedOnly
 from user.serializers import (
@@ -19,7 +20,7 @@ from user.serializers import (
     CustomAuthTokenSerializer,
     UserListSerializer,
     UserDetailSerializer,
-    FollowSerializer,
+    FollowSerializer, LikedPostSerializer,
 )
 
 
@@ -120,3 +121,15 @@ class FollowUserView(APIView):
 
         data = {"follow": follow}
         return Response(data)
+
+
+class LikedPostListView(generics.ListAPIView):
+    serializer_class = LikedPostSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        post_ids = user.user_post_likes.values_list("post_id", flat=True)
+        queryset = Post.objects.filter(id__in=post_ids)
+        return queryset
