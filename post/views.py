@@ -8,7 +8,9 @@ from post.serializers import PostSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.select_related("user").prefetch_related(
+        "post_comments"
+    )  # TODO FULL FIX N+1 PROBLEM
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     authentication_classes = (TokenAuthentication,)
@@ -18,12 +20,12 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class UserFeedView(generics.ListAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
     authentication_classes = (TokenAuthentication,)
     serializer_class = PostSerializer
 
     def get_queryset(self):
         user = self.request.user
         following_users = user.following.all()
-        queryset = Post.objects.all().filter(user__in=following_users)
+        queryset = Post.objects.select_related("user").filter(user__in=following_users)  # TODO FULL FIX N+1 PROBLEM
         return queryset
