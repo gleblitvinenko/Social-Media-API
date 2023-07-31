@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from post.models import Post, PostLike
 from post.permissions import IsOwnerOrReadOnly
-from post.serializers import PostSerializer
+from post.serializers import PostSerializer, AuthorSerializer, GetLikerSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -57,3 +57,15 @@ class LikeView(APIView):
             'liked': liked
         }
         return Response(data, status=status.HTTP_200_OK)
+
+
+class GetLikersView(generics.ListAPIView):
+    serializer_class = GetLikerSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication,)
+
+    def get_queryset(self):
+        post_id = self.kwargs["post_id"]
+        queryset = PostLike.objects.filter(post_id=post_id)
+        return queryset
+

@@ -61,3 +61,12 @@ class PostSerializer(serializers.ModelSerializer):
         serializer = CommentSerializer(post_comments, many=True)
 
         return serializer.data
+
+
+class GetLikerSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username')
+    profile_picture = serializers.URLField(source='user.profile_picture')
+
+    class Meta:
+        model = PostLike
+        fields = ("username", "profile_picture")
