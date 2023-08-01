@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.shortcuts import get_object_or_404
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
@@ -25,6 +27,9 @@ from user.serializers import (
 )
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to manage his/her profile"
+)
 class MyProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = MyProfileSerializer
@@ -35,18 +40,27 @@ class MyProfileView(generics.RetrieveUpdateAPIView, generics.DestroyAPIView):
         return self.request.user
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to sign up for the platform"
+)
 class RegisterView(generics.CreateAPIView):
     queryset = get_user_model().objects.all()
     permission_classes = (AllowUnauthenticatedOnly,)
     serializer_class = UserRegisterSerializer
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to login for the platform"
+)
 class LoginView(ObtainAuthToken):
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
     serializer_class = CustomAuthTokenSerializer
     permission_classes = (AllowUnauthenticatedOnly,)
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to logout for the platform"
+)
 class LogoutView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -57,6 +71,10 @@ class LogoutView(APIView):
         return Response({"detail": "Successfully logged out."})
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity check all profiles on the platform"
+                " and search profiles by username, first_name, last_name, birth_date"
+)
 class UserListView(generics.ListAPIView):
     queryset = get_user_model().objects.prefetch_related("followers", "following")
     serializer_class = UserListSerializer
@@ -66,6 +84,9 @@ class UserListView(generics.ListAPIView):
     search_fields = ["username", "first_name", "last_name", "birth_date"]
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to check current profile details"
+)
 class UserDetailView(generics.RetrieveAPIView):
     queryset = get_user_model().objects.prefetch_related(
         "followers", "following", "posts"
@@ -76,6 +97,9 @@ class UserDetailView(generics.RetrieveAPIView):
     lookup_field = "username"
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to see all followers current user has"
+)
 class GetFollowersView(generics.ListAPIView):
     serializer_class = FollowSerializer
     pagination_class = FollowerPagination
@@ -88,6 +112,9 @@ class GetFollowersView(generics.ListAPIView):
         return queryset
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to see all followings current user has"
+)
 class GetFollowingView(generics.ListAPIView):
     serializer_class = FollowSerializer
     pagination_class = FollowerPagination
@@ -100,6 +127,9 @@ class GetFollowingView(generics.ListAPIView):
         return queryset
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to follow another user"
+)
 class FollowUserView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -124,6 +154,9 @@ class FollowUserView(APIView):
         return Response(data)
 
 
+@extend_schema(
+    description="This endpoint gives user opportunity to see posts he/she has liked"
+)
 class LikedPostListView(generics.ListAPIView):
     serializer_class = LikedPostSerializer
     authentication_classes = (TokenAuthentication,)
