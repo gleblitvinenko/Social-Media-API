@@ -1,4 +1,4 @@
 # Social-Media-API
 
 ### Database structure
-![Database structure:](database_project_structure.png)
+![Database structure:](db_structure.png)
