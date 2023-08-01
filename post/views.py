@@ -32,8 +32,7 @@ class UserFeedView(generics.ListAPIView):
         queryset = Post.objects.select_related("user").filter(
             user__in=following_users
         )  # TODO FULL FIX N+1 PROBLEM
-        return queryset.prefetch_related(
-        )
+        return queryset.prefetch_related()
 
 
 class LikeView(APIView):
@@ -53,9 +52,7 @@ class LikeView(APIView):
             PostLike.objects.create(user=user, post=post)
             liked = True
 
-        data = {
-            'liked': liked
-        }
+        data = {"liked": liked}
         return Response(data, status=status.HTTP_201_CREATED)
 
 
@@ -109,7 +106,5 @@ class LikeCommentView(APIView):
             CommentLike.objects.create(user=user, comment=comment)
             liked = True
 
-        data = {
-            'liked': liked
-        }
+        data = {"liked": liked}
         return Response(data, status=status.HTTP_201_CREATED)

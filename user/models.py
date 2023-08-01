@@ -49,13 +49,13 @@ class User(AbstractUser):
         settings.AUTH_USER_MODEL,
         related_name="user_followers",
         blank=True,
-        symmetrical=False  # one-way communication
+        symmetrical=False,  # one-way communication
     )
     following = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name="user_following",
         blank=True,
-        symmetrical=False  # one-way communication
+        symmetrical=False,  # one-way communication
     )
 
     USERNAME_FIELD = "email"

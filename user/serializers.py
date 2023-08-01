@@ -23,7 +23,7 @@ class MyProfileSerializer(serializers.ModelSerializer):
             "profile_picture",
             "birth_date",
             "number_of_followers",
-            "number_of_following"
+            "number_of_following",
         )
         extra_kwargs = {"password": {"write_only": True, "min_length": 8}}
 
@@ -115,7 +115,6 @@ class CustomAuthTokenSerializer(serializers.Serializer):
 
 
 class UserListSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = get_user_model()
         fields = (
@@ -149,7 +148,7 @@ class UserPostsSerializer(serializers.ModelSerializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     number_of_posts = serializers.SerializerMethodField()
-    user_posts = serializers.SerializerMethodField('paginated_user_posts')
+    user_posts = serializers.SerializerMethodField("paginated_user_posts")
 
     class Meta:
         model = get_user_model()
@@ -163,7 +162,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
             "number_of_followers",
             "number_of_following",
             "number_of_posts",
-            "user_posts"
+            "user_posts",
         )
 
     @staticmethod
@@ -173,7 +172,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     def paginated_user_posts(self, obj):
         page_size = 1
         paginator = Paginator(obj.posts.all(), page_size)
-        page = self.context['request'].query_params.get('page') or 1
+        page = self.context["request"].query_params.get("page") or 1
 
         user_posts = paginator.page(page)
         serializer = UserPostsSerializer(user_posts, many=True)

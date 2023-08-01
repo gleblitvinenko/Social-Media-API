@@ -20,7 +20,8 @@ from user.serializers import (
     CustomAuthTokenSerializer,
     UserListSerializer,
     UserDetailSerializer,
-    FollowSerializer, LikedPostSerializer,
+    FollowSerializer,
+    LikedPostSerializer,
 )
 
 

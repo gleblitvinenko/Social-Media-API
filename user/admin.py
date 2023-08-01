@@ -27,13 +27,7 @@ class UserAdmin(DjangoUserAdmin):
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
     add_fieldsets = (
-        (
-            None,
-            {
-                "classes": ("wide",),
-                "fields": ("email", "password1", "password2"),
-            },
-        ),
+        (None, {"classes": ("wide",), "fields": ("email", "password1", "password2")}),
     )
     list_display = ("email", "username", "first_name", "last_name", "is_staff")
     search_fields = ("email", "first_name", "last_name")

@@ -64,8 +64,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class GetLikerSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(source='user.username')
-    profile_picture = serializers.URLField(source='user.profile_picture')
+    username = serializers.CharField(source="user.username")
+    profile_picture = serializers.URLField(source="user.profile_picture")
 
     class Meta:
         model = PostLike

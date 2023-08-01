@@ -14,7 +14,9 @@ class Post(models.Model):
         return self.post_post_likes.count()
 
     def __str__(self):
-        return f"{self.content[:10]} posted by {self.user.username} at {self.created_at}"
+        return (
+            f"{self.content[:10]} posted by {self.user.username} at {self.created_at}"
+        )
 
 
 class Comment(models.Model):
@@ -33,10 +35,12 @@ class Comment(models.Model):
 
 class PostLike(models.Model):
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="user_post_likes", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="user_post_likes",
+        on_delete=models.CASCADE,
     )
     post = models.ForeignKey(
-        Post, related_name="post_post_likes", on_delete=models.CASCADE, null=True,
+        Post, related_name="post_post_likes", on_delete=models.CASCADE, null=True
     )
     liked_at = models.DateTimeField(auto_now_add=True)
 
@@ -46,7 +50,9 @@ class PostLike(models.Model):
 
 class CommentLike(models.Model):
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name="user_comment_likes", on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL,
+        related_name="user_comment_likes",
+        on_delete=models.CASCADE,
     )
     comment = models.ForeignKey(
         Comment, related_name="comment_comment_likes", on_delete=models.CASCADE
