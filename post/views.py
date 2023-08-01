@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from post.models import Post, PostLike, Comment, CommentLike
 from post.permissions import IsOwnerOrReadOnly
-from post.serializers import PostSerializer, AuthorSerializer, GetLikerSerializer, CommentSerializer
+from post.serializers import PostSerializer, GetLikerSerializer, CommentSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -41,7 +41,7 @@ class LikeView(APIView):
     authentication_classes = (TokenAuthentication,)
     """Toggle like"""
 
-    def post(self, request, format=None, post_id=None):
+    def post(self, request, post_id=None):
         post = Post.objects.get(pk=post_id)
         user = self.request.user
 
@@ -56,7 +56,7 @@ class LikeView(APIView):
         data = {
             'liked': liked
         }
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class GetLikersView(generics.ListAPIView):
@@ -97,7 +97,7 @@ class LikeCommentView(APIView):
     authentication_classes = (TokenAuthentication,)
     """Toggle Comment like"""
 
-    def post(self, request, format=None, comment_id=None, post_id=None):
+    def post(self, request, comment_id=None):
         comment = Comment.objects.get(pk=comment_id)
         user = self.request.user
 
@@ -112,6 +112,4 @@ class LikeCommentView(APIView):
         data = {
             'liked': liked
         }
-        return Response(data, status=status.HTTP_200_OK)
-
-
+        return Response(data, status=status.HTTP_201_CREATED)
